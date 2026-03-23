@@ -1,0 +1,92 @@
+{
+  "title": "Docker Container Logs",
+  "uid": "docker-logs-01",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "10s",
+  "time": { "from": "now-1h", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "title": "All Container Logs",
+      "type": "logs",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 10 },
+      "datasource": "Loki",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "{compose_project=\"docker-logging\"}",
+          "datasource": "Loki"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "showLabels": true,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": false,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
+      }
+    },
+    {
+      "id": 2,
+      "title": "API Logs Only",
+      "type": "logs",
+      "gridPos": { "x": 0, "y": 10, "w": 24, "h": 8 },
+      "datasource": "Loki",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "{compose_service=\"api\"}",
+          "datasource": "Loki"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "showLabels": true,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": true,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
+      }
+    },
+    {
+      "id": 3,
+      "title": "Log Volume by Container (last 1h)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 18, "w": 24, "h": 8 },
+      "datasource": "Loki",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (container) (count_over_time({compose_project=\"docker-logging\"}[1m]))",
+          "datasource": "Loki",
+          "legendFormat": "{{container}}"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Error Logs",
+      "type": "logs",
+      "gridPos": { "x": 0, "y": 26, "w": 24, "h": 6 },
+      "datasource": "Loki",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "{compose_project=\"docker-logging\", level=\"error\"}",
+          "datasource": "Loki"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "showLabels": true,
+        "wrapLogMessage": true,
+        "enableLogDetails": true,
+        "sortOrder": "Descending"
+      }
+    }
+  ]
+}
